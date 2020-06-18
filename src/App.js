@@ -17,13 +17,15 @@ function LinkPreview() {
   const handleSubmit = async (evt) => {
     setLoading(true);
     evt.preventDefault();
-    console.log(`Submitting ${text}`);
+    const encoding = Buffer.from(text).toString("base64");
+
+    console.log(`Submitting ${text}`, encoding);
 
     const res = await fetch(
-      "https://us-central1-blogchain-a6eac.cloudfunctions.net/scraper",
+      "http://localhost:5001/blogchain-a6eac/us-central1/scraper",
       {
         method: "POST",
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ encoding }),
       }
     );
 
