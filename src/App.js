@@ -12,7 +12,7 @@ function App() {
 function LinkPreview() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [links, setLinks] = useState([]);
+  const [data, setData] = useState(null);
   const [valid, setValid] = useState(true);
 
   const handleSubmit = async (evt) => {
@@ -20,7 +20,7 @@ function LinkPreview() {
 
     const validURL = () =>
       url.match(
-        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi
+        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi
       );
 
     if (validURL(url)) {
@@ -30,7 +30,7 @@ function LinkPreview() {
       console.log(`Submitting ${url}`, "encoded as", encoding);
 
       const res = await fetch(
-        "http://localhost:5001/blogchain-a6eac/us-central1/scraper",
+        "https://us-central1-blogchain-a6eac.cloudfunctions.net/scraper",
         {
           method: "POST",
           body: JSON.stringify({ encoding }),
@@ -39,7 +39,7 @@ function LinkPreview() {
 
       const data = await res.json();
 
-      setLinks(data);
+      setData(data);
       setLoading(false);
     } else {
       setValid(false);
@@ -70,22 +70,26 @@ function LinkPreview() {
       <h2>Preview</h2>
       <p>{url}</p>
       {loading && <h3>Fetching link previews... 🤔🤔🤔</h3>}
-      {links.map((obj) => (
-        <PreviewCard key={obj.url} linkData={obj} />
-      ))}
+      {data && <PreviewCard key={data.url} linkData={data} />}
     </div>
   );
 }
 
 function PreviewCard({ linkData }) {
   return (
-    <a className="preview" href={linkData.url}>
-      <img src={linkData.image} />
-      <div>
+    <div>
+      <a className="preview" href={linkData.url}>
+        {/* <img src={linkData.image} /> */}
+        {/* <div> */}
         <h4>{linkData.title}</h4>
-        <p>{linkData.description}</p>
-      </div>
-    </a>
+        {/* <p>{linkData.description}</p> */}
+
+        {/* </div> */}
+      </a>
+      {linkData.text.map((p) => (
+        <p>{p}</p>
+      ))}
+    </div>
   );
 }
 
